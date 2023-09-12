@@ -4,6 +4,11 @@ require('dotenv').config()
 const express = require('express')
 const app = express()
 
+// Import database connection
+const connectDB = require('./config/db')
+// Start db
+connectDB()
+
 // Api routes
 app.use('/api', require('./routes/index'))
 
