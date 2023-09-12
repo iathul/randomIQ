@@ -1,5 +1,7 @@
-const express = require('express')
+// Load environment variables
+require('dotenv').config()
 
+const express = require('express')
 const app = express()
 
 // Api routes
