@@ -6,29 +6,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const roomList = document.getElementById('room-list')
     roomList.innerHTML = ''
 
-    rooms.forEach(room => {
-      const li = document.createElement('li')
-      li.textContent = room.roomName
-
-      // Create a "Join" button next to each room
-      const joinButton = document.createElement('button')
-      joinButton.textContent = 'Join'
-      joinButton.addEventListener('click', () => {
-        // Display room details and enable "Join" button
-        document.querySelector('.room-details').style.display = 'block'
-        document.getElementById('room-name').textContent = room.roomName
-        document.getElementById('join-room').style.display = 'block'
-        document.getElementById('leave-room').style.display = 'none'
-      })
-
-      li.appendChild(joinButton)
-      roomList.appendChild(li)
-    })
-
-    // Show "Create Room" button if no rooms available
     if (rooms.length === 0) {
+      // If no rooms available, display a message
+      const message = document.createElement('p')
+      message.textContent =
+        'No rooms available, click below button to create a room.'
+      roomList.appendChild(message)
       document.getElementById('create-room').style.display = 'block'
     } else {
+      rooms.forEach(room => {
+        const li = document.createElement('li')
+        li.textContent = room.roomName
+
+        // Create a "Join" button next to each room
+        const joinButton = document.createElement('button')
+        joinButton.textContent = 'Join'
+        joinButton.addEventListener('click', () => {
+          // Display room details and enable "Join" button
+          document.querySelector('.room-details').style.display = 'block'
+          document.getElementById('room-name').textContent = room.roomName
+          document.getElementById('join-room').style.display = 'block'
+          document.getElementById('leave-room').style.display = 'none'
+        })
+
+        li.appendChild(joinButton)
+        roomList.appendChild(li)
+      })
+
+      // Hide "Create Room" button if rooms are available
       document.getElementById('create-room').style.display = 'none'
     }
   }
