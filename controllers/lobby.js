@@ -1,4 +1,3 @@
-const { request } = require('express')
 const Room = require('../models/room')
 
 // API to list available rooms
@@ -25,7 +24,7 @@ exports.listRooms = async (req, res) => {
 // Create new room and add user
 exports.createRoom = async (req, res) => {
   try {
-    const { roomName, userId } = request.body
+    const { roomName, userId } = req.body
     const room = new Room({ roomName: roomName })
     room.users.push(userId)
     await room.save()
