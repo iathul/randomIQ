@@ -15,6 +15,8 @@ const path = require('path')
 
 // Serve static files from the "client" directory
 app.use(express.static(path.join(__dirname, 'client')))
+app.use(express.urlencoded({ extended: false }))
+app.use(express.json())
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'client', 'index.html'))
