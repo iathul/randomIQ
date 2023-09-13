@@ -13,4 +13,11 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 })
 
+userSchema.methods = {
+  getUserByUserName(userName) {
+    const User = mongoose.model('User')
+    return User.findOne({ userName })
+  }
+}
+
 module.exports = mongoose.model('User', userSchema)
