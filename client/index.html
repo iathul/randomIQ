@@ -4,27 +4,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Real-Time Quiz Lobby</title>
   <link rel="stylesheet" href="styles.css">
+  <title>Lobby</title>
 </head>
 
 <body>
   <div class="container">
-  <div class="wrapper">
-    <h1>Real-Time Quiz Lobby</h1>
+    <h1>Lobby</h1>
     <div class="room-list">
       <h2>Available Rooms</h2>
       <ul id="room-list"></ul>
-    </div>
-    <div class="create-room">
-      <h2>Create a Room</h2>
-      <input type="text" id="room-name" placeholder="Enter Room Name">
-      <button id="create-room-btn">Create</button>
+      <button id="create-room">Create Room</button>
     </div>
   </div>
-  </div>
-  <!-- <script src="socket.io.js"></script>
-  <script src="app.js"></script> -->
+  <!-- <div class="room-details" style="display: none;">
+    <h2>Room Details</h2>
+    <p id="room-name"></p>
+    <button id="join-room">Join Room</button>
+  </div> -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
 </body>
 
 </html>
