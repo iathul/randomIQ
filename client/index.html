@@ -16,12 +16,18 @@
       <ul id="room-list"></ul>
       <button id="create-room">Create Room</button>
     </div>
+    <div class="create-room-form" style="display: none;">
+      <h2>Create Room</h2>
+      <form id="create-room-form">
+        <label for="room-name">Room Name:</label>
+        <input type="text" id="room-name" required>
+        <label for="room-description">Room Description:</label>
+        <input type="text" id="room-description" required>
+        <button type="submit">Create</button>
+      </form>
+    </div>
   </div>
-  <!-- <div class="room-details" style="display: none;">
-    <h2>Room Details</h2>
-    <p id="room-name"></p>
-    <button id="join-room">Join Room</button>
-  </div> -->
+
   <script src="/socket.io/socket.io.js"></script>
   <script src="script.js"></script>
 </body>

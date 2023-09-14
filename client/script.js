@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
   const socket = io()
 
+  getRooms()
+
   // Function to render the room list
   function renderRoomList(rooms) {
     const roomList = document.getElementById('room-list')
@@ -38,15 +40,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Initial room list fetch (API call)
-  fetch('/api/lobby/rooms')
-    .then(response => response.json())
-    .then(rooms => {
-      renderRoomList(rooms.rooms)
+  // Function to show the room creation form
+  function showCreateRoomForm() {
+    const createRoomForm = document.querySelector('.create-room-form')
+    createRoomForm.style.display = 'block'
+    createRoomForm.addEventListener('submit', e => {
+      e.preventDefault()
+      const roomName = document.getElementById('room-name').value
+      const roomDescription = document.getElementById('room-description').value
+
+      fetch('/api/lobby/rooms', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          roomName: roomName,
+          description: roomDescription
+        })
+      })
+        .then(response => response.json())
+        .then(rooms => {
+          getRooms()
+          createRoomForm.style.display = 'none'
+        })
+        .catch(error => {
+          console.error('Error creating room:', error)
+        })
     })
-    .catch(error => {
-      console.error('Error fetching room list:', error)
-    })
+  }
+
+  function getRooms() {
+    // Initial room list fetch (API call)
+    fetch('/api/lobby/rooms')
+      .then(response => response.json())
+      .then(rooms => {
+        renderRoomList(rooms.rooms)
+      })
+      .catch(error => {
+        console.error('Error fetching room list:', error)
+      })
+  }
 
   // Socket.IO: Listen for updates when a new user joins or leaves a room
   socket.on('userJoined', username => {
@@ -65,8 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const leaveRoomButton = document.getElementById('leave-room')
 
   createRoomButton.addEventListener('click', () => {
-    // Implement logic to create a room (API call)
-    // After creating, fetch and render the updated room list
+    showCreateRoomForm()
   })
 
   // joinRoomButton.addEventListener('click', () => {
