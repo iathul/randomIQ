@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style_auth.css">
+  <title>Registration</title>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Registration</h1>
+    <form id="registration-form">
+      <label for="username">Username:</label>
+      <input type="text" id="username" required>
+      <label for="fullname">Full Name:</label>
+      <input type="text" id="fullname" required>
+      <button type="submit">Register</button>
+    </form>
+    <p>Already have an account? <a href="login.html">Login here</a></p>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="registration.js"></script>
+</body>
+
+</html>

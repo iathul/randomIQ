@@ -19,7 +19,16 @@ app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client', 'index.html'))
+  res.sendFile(__dirname + '/client/login.html')
+})
+
+app.get('/register', (req, res) => {
+  res.sendFile(__dirname + '/client/login.html')
+})
+
+//Serve index.html for /lobby path
+app.get('/lobby', (req, res) => {
+  res.sendFile(__dirname + '/client/lobby.html')
 })
 
 // Api routes
