@@ -9,9 +9,11 @@ connectDB()
 
 const express = require('express')
 const app = express()
-const http = require('http').createServer(app)
-const io = require('socket.io')(http)
+const server = require('http').createServer(app)
 const path = require('path')
+
+const initSocket = require('./socket/socket')
+const io = initSocket(server)
 
 // Serve static files from the "client" directory
 app.use(express.static(path.join(__dirname, 'client')))
@@ -43,6 +45,6 @@ io.on('connection', socket => {
 
 const PORT = process.env.PORT || 5000
 
-http.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server Running at PORT: ${PORT}`)
 })
