@@ -116,3 +116,71 @@ document.addEventListener('DOMContentLoaded', () => {
   //   joinRoomButton.style.display = 'block'
   // })
 })
+
+document.addEventListener('DOMContentLoaded', () => {
+  const loginForm = document.getElementById('login-form')
+
+  loginForm.addEventListener('submit', e => {
+    e.preventDefault()
+
+    const userName = document.getElementById('username').value
+    fetch('/api/users/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        userName: userName
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.auth_token) {
+          localStorage.setItem('user', data.user)
+          localStorage.setItem('authToken', data.auth_token)
+          window.location.href = '/lobby.html'
+        } else {
+          console.error('Authentication failed')
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error)
+      })
+  })
+})
+
+document.addEventListener('DOMContentLoaded', () => {
+  const registrationForm = document.getElementById('registration-form')
+
+  registrationForm.addEventListener('submit', e => {
+    e.preventDefault()
+
+    const userName = document.getElementById('userName').value
+    const fullName = document.getElementById('fullName').value
+
+    // Send a POST request to your server for user registration
+    fetch('/api/users/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        userName: userName,
+        fullName: fullName
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.auth_token) {
+          localStorage.setItem('user', data.user)
+          localStorage.setItem('authToken', data.auth_token)
+          window.location.href = '/lobby.html'
+        } else {
+          console.error('Registration failed')
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error)
+      })
+  })
+})
