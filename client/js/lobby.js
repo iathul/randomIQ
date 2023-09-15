@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   const socket = io()
+  checkAuthenticated()
 
   // Get DOM elements
   const createRoomButton = document.getElementById('create-room-button')
@@ -55,11 +56,26 @@ document.addEventListener('DOMContentLoaded', () => {
         // Create a "Join" button with Bootstrap classes
         const joinButton = document.createElement('button')
         joinButton.textContent = 'Join'
-        joinButton.className = 'btn btn-success'
+        joinButton.className = 'join-btn btn btn-success'
+        joinButton.setAttribute('data-room-id', room._id)
 
-        // Add an event listener to the "Join" button (implement logic as needed)
-        joinButton.addEventListener('click', () => {
-          // Handle joining the room
+        joinButton.addEventListener('click', async e => {
+          e.preventDefault()
+          if (e.target.classList.contains('join-btn')) {
+            const roomId = e.target.getAttribute('data-room-id')
+            try {
+              // Get the user's auth token from localStorage
+              const authToken = localStorage.getItem('authToken')
+              if (!authToken) {
+                console.error('User is not authenticated.')
+                return
+              }
+
+              socket.emit('joinRoom', authToken, roomId)
+            } catch (error) {
+              console.error('Error joining room:', error)
+            }
+          }
         })
 
         // Append the elements to the list item
@@ -86,17 +102,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Socket.IO: Listen for updates when a new user joins or leaves a room
-  socket.on('userJoined', username => {
-    console.log(`${username} has joined the room`)
-    // You can update the UI to display this information to the user
+  function checkAuthenticated() {
+    const authToken = localStorage.getItem('authToken')
+    if (!authToken) {
+      console.error('User is not authenticated.')
+      window.location.href = '/login.html'
+    } else {
+      socket.emit('checkToken', authToken)
+    }
+  }
+
+  // Socket.IO: Listen for updates
+  socket.on('userJoined', message => {
+    console.log('message', message)
   })
 
-  socket.on('userLeft', username => {
-    console.log(`${username} has left the room`)
-    // You can update the UI to display this information to the user
+  socket.on('token_expired', event => {
+    window.location.href = '/login.html'
   })
-
   // Initial fetch and render of rooms
   getRooms()
 })

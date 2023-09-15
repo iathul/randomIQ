@@ -12,7 +12,7 @@ const app = express()
 const server = require('http').createServer(app)
 const path = require('path')
 
-const initSocket = require('./socket/socket')
+const { initSocket } = require('./socket/socket')
 const io = initSocket(server)
 
 // Serve static files from the "client" directory

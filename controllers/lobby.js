@@ -38,5 +38,3 @@ exports.createRoom = async (req, res) => {
       .send({ error: 'Failed to create room. Please try again.' })
   }
 }
-
-// API  to join room
