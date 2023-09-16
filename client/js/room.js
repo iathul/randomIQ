@@ -1,6 +1,7 @@
 // room.js
 document.addEventListener('DOMContentLoaded', async () => {
   const socket = io()
+  checkAuthenticated()
 
   const roomTitle = document.querySelector('.room-title')
   const roomDescription = document.querySelector('.room-description')
@@ -124,4 +125,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     getRoomDetails(roomId)
     checkUserInRoom(roomId)
   }
+  function checkAuthenticated() {
+    const authToken = localStorage.getItem('authToken')
+    if (!authToken) {
+      console.error('User is not authenticated.')
+      window.location.href = '/login.html'
+    } else {
+      socket.emit('checkToken', authToken)
+    }
+  }
+
+  socket.on('token_expired', event => {
+    window.location.href = '/login.html'
+  })
 })
