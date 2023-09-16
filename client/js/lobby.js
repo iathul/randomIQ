@@ -101,7 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
       socket.emit('checkToken', authToken)
     }
   }
-
   socket.on('token_expired', event => {
     window.location.href = '/login.html'
   })

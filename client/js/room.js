@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const userList = document.getElementById('user-list')
   const joinButton = document.getElementById('join-button')
   const toastContainer = document.querySelector('.toast-container')
+  const errorAlert = document.getElementById('error-message')
 
   function renderUserList(users) {
     userList.innerHTML = ''
@@ -137,5 +138,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   socket.on('token_expired', event => {
     window.location.href = '/login.html'
+  })
+  socket.on('error', error => {
+    errorAlert.textContent = error
+    errorAlert.classList.remove('d-none')
   })
 })

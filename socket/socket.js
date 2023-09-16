@@ -23,7 +23,7 @@ function initSocket(server) {
         )
       }
     })
-    
+
     socket.on('joinRoom', async (authToken, roomId) => {
       try {
         const decoded = await jwt.verify(authToken, process.env.JWT_SECRET)
@@ -32,7 +32,17 @@ function initSocket(server) {
         const room = await Room.findById(roomId)
 
         if (!user || !room) {
-          throw new Error('User or room not found')
+            io.emit('error', 'User or room not found.')
+            return
+        }
+
+        const userInAnyRoom = await Room.findOne({
+          users: { $in: [userId] }
+        })
+
+        if (userInAnyRoom) {
+          io.emit('error', 'You have already joined a room.')
+          return
         }
 
         if (room.users.length < room.maxUsers && !room.users.includes(userId)) {
