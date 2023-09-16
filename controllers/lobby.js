@@ -3,7 +3,11 @@ const Room = require('../models/room')
 // API to list available rooms
 exports.listRooms = async (req, res) => {
   try {
-    const rooms = await Room.find({}).populate('users')
+    const rooms = await Room.find({
+      $expr: {
+        $lt: [{ $size: '$users' }, 2]
+      }
+    }).populate('users')
     if (!rooms.length) {
       return res.status(404).send({
         message: 'No rooms found',
