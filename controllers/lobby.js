@@ -38,3 +38,26 @@ exports.createRoom = async (req, res) => {
       .send({ error: 'Failed to create room. Please try again.' })
   }
 }
+
+exports.getRoom = async (req, res) => {
+  try {
+    const { roomId } = req.params
+    const room = await Room.findById(roomId).populate('users')
+    if (!room) {
+      return res.status(404).send({
+        message: 'Room not found',
+        room: {}
+      })
+    } else {
+      return res.status(200).send({
+        message: 'Room details fetched successfully.',
+        room: room
+      })
+    }
+  } catch (error) {
+    console.error(`Failed to fetch room - ${error.message}`)
+    return res
+      .status(500)
+      .send({ error: 'Failed to fetch room. Please try again.' })
+  }
+}

@@ -33,6 +33,10 @@ app.get('/lobby', (req, res) => {
   res.sendFile(__dirname + '/client/lobby.html')
 })
 
+app.get('/room', (req, res) => {
+  res.sendFile(__dirname + '/client/room.html')
+})
+
 // Api routes
 app.use('/api', require('./routes/index'))
 
