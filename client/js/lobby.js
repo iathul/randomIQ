@@ -53,36 +53,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const roomNameDiv = document.createElement('div')
         roomNameDiv.textContent = room.roomName
 
-        // Create a "Join" button with Bootstrap classes
-        const joinButton = document.createElement('button')
-        joinButton.textContent = 'Join'
-        joinButton.className = 'join-btn btn btn-success'
-        joinButton.setAttribute('data-room-id', room._id)
+        // Create a "View" button with Bootstrap classes
+        const viewButton = document.createElement('button')
+        viewButton.textContent = 'View'
+        viewButton.className = 'view-btn btn btn-primary'
+        viewButton.setAttribute('data-room-id', room._id)
 
-        joinButton.addEventListener('click', async e => {
+        viewButton.addEventListener('click', e => {
           e.preventDefault()
-          if (e.target.classList.contains('join-btn')) {
+          if (e.target.classList.contains('view-btn')) {
             const roomId = e.target.getAttribute('data-room-id')
-            try {
-              // Get the user's auth token from localStorage
-              const authToken = localStorage.getItem('authToken')
-              if (!authToken) {
-                console.error('User is not authenticated.')
-                return
-              }
-
-              // Redirect to the room page with the room ID
-              window.location.href = `/room.html?roomId=${roomId}`
-              socket.emit('joinRoom', authToken, roomId)
-            } catch (error) {
-              console.error('Error joining room:', error)
-            }
+            // Redirect to the corresponding room page with the roomId parameter
+            window.location.href = `/room.html?roomId=${roomId}`
           }
         })
 
         // Append the elements to the list item
         listItem.appendChild(roomNameDiv)
-        listItem.appendChild(joinButton)
+        listItem.appendChild(viewButton)
 
         // Append the list item to the room list
         roomList.appendChild(listItem)
