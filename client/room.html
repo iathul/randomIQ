@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+    crossorigin="anonymous"></script>
+  <title>Room</title>
+  <style>
+    /* Custom CSS for the room page */
+    .room-container {
+      margin-top: 20px;
+    }
+
+    .room-card {
+      margin-bottom: 20px;
+    }
+
+    .room-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .room-description {
+      margin-bottom: 10px;
+    }
+
+    .user-list {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .user-list-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    /* Add your own custom styles here */
+  </style>
+</head>
+
+<body class="bg-light">
+  <div class="container mt-5">
+    <div class="row justify-content-center room-container">
+      <div class="col-md-6 room-card">
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Room Name</h3>
+          </div>
+          <div class="card-body">
+            <h4 class="room-title">Room Title</h4>
+            <p class="room-description">Room Description</p>
+            <h5>Users in the Room:</h5>
+            <ul class="user-list" id="user-list">
+              <!-- Populate this list with users in the room using JavaScript -->
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <!-- Toast notifications will appear here -->
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/room.js"></script>
+</body>
+
+</html>

@@ -71,6 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 return
               }
 
+              // Redirect to the room page with the room ID
+              window.location.href = `/room.html?roomId=${roomId}`
               socket.emit('joinRoom', authToken, roomId)
             } catch (error) {
               console.error('Error joining room:', error)
@@ -111,11 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
       socket.emit('checkToken', authToken)
     }
   }
-
-  // Socket.IO: Listen for updates
-  socket.on('userJoined', message => {
-    console.log('message', message)
-  })
 
   socket.on('token_expired', event => {
     window.location.href = '/login.html'
