@@ -1,35 +1,29 @@
 // room.js
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   const socket = io()
 
-  // Get DOM elements
   const roomTitle = document.querySelector('.room-title')
   const roomDescription = document.querySelector('.room-description')
   const userList = document.getElementById('user-list')
+  const joinButton = document.getElementById('join-button')
   const toastContainer = document.querySelector('.toast-container')
 
-  // Function to render the list of users in the room
   function renderUserList(users) {
     userList.innerHTML = ''
 
     users.forEach(user => {
-      // Create list item for each user
       const listItem = document.createElement('li')
       listItem.className = 'list-group-item'
 
-      // Create username element
       const username = document.createElement('span')
-      username.textContent = user.userName // Use "userName" from the JSON response
+      username.textContent = user.userName
 
-      // Append username to list item
       listItem.appendChild(username)
 
-      // Append list item to user list
       userList.appendChild(listItem)
     })
   }
 
-  // Function to display a toast notification
   function showToast(message) {
     const toast = document.createElement('div')
     toast.className = 'toast'
@@ -62,35 +56,72 @@ document.addEventListener('DOMContentLoaded', () => {
     toastInstance.show()
   }
 
-  // Function to fetch room details from the API
+  async function checkUserInRoom(roomId) {
+    try {
+      const response = await fetch(`/api/lobby/rooms/${roomId}`)
+      const roomData = await response.json()
+      const authUser = JSON.parse(localStorage.getItem('user'))
+
+      let isJoined = roomData.room.users.find(user => {
+        return user.userName === authUser.userName
+      })
+
+      if (isJoined) {
+        joinButton.style.display = 'none'
+      } else {
+        joinButton.style.display = 'block'
+      }
+    } catch (error) {
+      console.error('Error checking room membership:', error)
+    }
+  }
+
+  joinButton.addEventListener('click', async () => {
+    const authToken = localStorage.getItem('authToken')
+    const urlParams = new URLSearchParams(window.location.search)
+    const roomId = urlParams.get('roomId')
+
+    if (joinButton.style.display !== 'none') {
+      socket.emit('joinRoom', authToken, roomId)
+    }
+  })
+
   async function getRoomDetails(roomId) {
     try {
-      const response = await fetch(`/api/lobby/rooms/${roomId}`) // Replace with your API endpoint
+      const response = await fetch(`/api/lobby/rooms/${roomId}`)
       const roomData = await response.json()
 
-      // Update room title and description
       roomTitle.textContent = roomData.room.roomName
       roomDescription.textContent = `Description: ${roomData.room.roomDescription}`
 
-      // Render the list of users in the room
       renderUserList(roomData.room.users)
     } catch (error) {
       console.error('Error fetching room details:', error)
     }
   }
 
-  // Fetch room details when the page loads
+  async function updateUserList(roomId) {
+    try {
+      const response = await fetch(`/api/lobby/rooms/${roomId}`)
+      const roomData = await response.json()
+
+      renderUserList(roomData.room.users)
+    } catch (error) {
+      console.error('Error updating user list:', error)
+    }
+  }
+
   const urlParams = new URLSearchParams(window.location.search)
   const roomId = urlParams.get('roomId')
 
+  socket.on('userJoined', message => {
+    showToast(message)
+    getRoomDetails(roomId)
+    updateUserList(roomId)
+    checkUserInRoom(roomId)
+  })
   if (roomId) {
     getRoomDetails(roomId)
-    // Listen for a socket.io event when a new user joins the room
-    socket.on('userJoined', message => {
-      showToast(message)
-      console.log('message', message)
-    })
+    checkUserInRoom(roomId)
   }
-
-
 })

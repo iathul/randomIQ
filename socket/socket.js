@@ -23,7 +23,7 @@ function initSocket(server) {
         )
       }
     })
-
+    
     socket.on('joinRoom', async (authToken, roomId) => {
       try {
         const decoded = await jwt.verify(authToken, process.env.JWT_SECRET)
@@ -35,11 +35,12 @@ function initSocket(server) {
           throw new Error('User or room not found')
         }
 
-        if (room.users.length < 2 && !room.users.includes(userId)) {
+        if (room.users.length < room.maxUsers && !room.users.includes(userId)) {
           room.users.push(userId)
           await room.save()
 
           socket.join(roomId)
+
           io.to(roomId).emit(
             'userJoined',
             `${user.userName} has joined the room ${room.roomName}`
@@ -47,7 +48,7 @@ function initSocket(server) {
         }
       } catch (error) {
         console.error(error)
-        io.emit('token_expired', 'Token expired please login to continue.')
+        io.emit('token_expired', 'Token expired, please login to continue.')
       }
     })
 

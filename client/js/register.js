@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
       })
       const data = await response.json()
       if (data.auth_token) {
-        localStorage.setItem('user', data.user)
+        localStorage.setItem('user', JSON.stringify(data.user))
         localStorage.setItem('authToken', data.auth_token)
         window.location.href = '/lobby.html'
       } else {
