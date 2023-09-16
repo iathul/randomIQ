@@ -1,5 +1,7 @@
 const socketIo = require('socket.io')
 const jwt = require('jsonwebtoken')
+const mongoose = require('mongoose')
+const mongoId = mongoose.Types.ObjectId
 const User = require('../models/user')
 const Room = require('../models/room')
 
@@ -15,25 +17,36 @@ function initSocket(server) {
       try {
         await jwt.verify(authToken, process.env.JWT_SECRET)
       } catch (error) {
-        io.emit('token_expired', 'Token expired please login to continue.')
+        io.emit(
+          'token_expired',
+          'Access token expired please login to continue.'
+        )
       }
     })
 
     socket.on('joinRoom', async (authToken, roomId) => {
       try {
         const decoded = await jwt.verify(authToken, process.env.JWT_SECRET)
-        const userId = decoded
+        const userId = decoded?._id
         const user = await User.findById(userId)
         const room = await Room.findById(roomId)
-        room.users.push(userId)
-        await room.save()
 
-        socket.join(roomId)
-        io.to(roomId).emit(
-          'userJoined',
-          `${user.userName} has joined the room ${room.roomName}`
-        )
+        if (!user || !room) {
+          throw new Error('User or room not found')
+        }
+
+        if (room.users.length < 2 && !room.users.includes(userId)) {
+          room.users.push(userId)
+          await room.save()
+
+          socket.join(roomId)
+          io.to(roomId).emit(
+            'userJoined',
+            `${user.userName} has joined the room ${room.roomName}`
+          )
+        }
       } catch (error) {
+        console.error(error)
         io.emit('token_expired', 'Token expired please login to continue.')
       }
     })
