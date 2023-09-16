@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const createRoomButton = document.getElementById('create-room-button')
   const createRoomForm = document.getElementById('create-room-form')
   const roomList = document.getElementById('room-list')
+  const logoutButton = document.getElementById('logout-button')
 
   // Handle room creation form display
   createRoomButton.addEventListener('click', () => {
@@ -101,6 +102,12 @@ document.addEventListener('DOMContentLoaded', () => {
       socket.emit('checkToken', authToken)
     }
   }
+  // Add a click event listener to the logout button
+  logoutButton.addEventListener('click', () => {
+    localStorage.removeItem('authToken')
+    localStorage.removeItem('user')
+    window.location.href = '/login.html' // Redirect to the login page
+  })
   socket.on('token_expired', event => {
     window.location.href = '/login.html'
   })

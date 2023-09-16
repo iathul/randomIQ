@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const joinButton = document.getElementById('join-button')
   const toastContainer = document.querySelector('.toast-container')
   const errorAlert = document.getElementById('error-message')
+  const logoutButton = document.getElementById('logout-button')
 
   function renderUserList(users) {
     userList.innerHTML = ''
