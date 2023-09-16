@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded',async () => {
   const loginForm = document.getElementById('login-form')
+  const errorAlert = document.getElementById('error-message')
   // Handle user login
   loginForm.addEventListener('submit', async e => {
     e.preventDefault()
@@ -16,7 +17,8 @@ document.addEventListener('DOMContentLoaded',async () => {
         localStorage.setItem('authToken', data.auth_token)
         window.location.href = '/lobby.html'
       } else {
-        console.error('Authentication failed')
+        errorAlert.textContent = data.error
+        errorAlert.classList.remove('d-none')
       }
     } catch (error) {
       console.error('Error:', error)
