@@ -3,7 +3,8 @@ const mongoose = require('mongoose')
 const roomSchema = new mongoose.Schema(
   {
     roomName: {
-      type: String
+      type: String,
+      required: true
     },
     users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     maxUsers: { type: Number, default: 2 },
@@ -11,6 +12,10 @@ const roomSchema = new mongoose.Schema(
       type: String,
       enum: ['open', 'closed'],
       default: 'open'
+    },
+    description: {
+      type: String,
+      required: true
     }
   },
   {

@@ -92,10 +92,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       const response = await fetch(`/api/lobby/rooms/${roomId}`)
       const roomData = await response.json()
 
-      roomTitle.textContent = roomData.room.roomName
-      roomDescription.textContent = `Description: ${roomData.room.roomDescription}`
+      roomTitle.textContent = roomData?.room?.roomName
+      roomDescription.textContent = `Description: ${roomData?.room?.description}`
 
-      renderUserList(roomData.room.users)
+      renderUserList(roomData?.room?.users)
     } catch (error) {
       console.error('Error fetching room details:', error)
     }

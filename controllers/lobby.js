@@ -24,8 +24,8 @@ exports.listRooms = async (req, res) => {
 // Create new room and add user
 exports.createRoom = async (req, res) => {
   try {
-    const { roomName } = req.body
-    const room = new Room({ roomName: roomName })
+    const { roomName, description } = req.body
+    const room = new Room({ roomName: roomName, description: description })
     await room.save()
     return res.status(200).send({
       message: 'Room created successfully.',
