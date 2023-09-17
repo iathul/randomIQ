@@ -12,7 +12,7 @@
   <title>Login</title>
 </head>
 
-<body class="bg-light">
+<!-- <body class="bg-light">
   <div class="container mt-5">
     <div class="row justify-content-center room-container">
       <div class="col-md-6 room-card">
@@ -28,7 +28,6 @@
             <p class="room-description">Room Description</p>
             <h5>Users in the Room:</h5>
             <ul class="user-list" id="user-list">
-              <!-- Populate this list with users in the room using JavaScript -->
             </ul>
             <div id="error-message" class="alert alert-danger d-none" role="alert">
             </div>
@@ -39,9 +38,55 @@
     </div>
   </div>
   <div class="toast-container position-fixed bottom-0 end-0 p-3">
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/room.js"></script>
+</body> -->
+<body class="bg-light">
+  <div class="container mt-5">
+    <div class="row justify-content-center room-container">
+      <div class="col-md-6 room-card">
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+              <h3 class="mb-0">Game Room</h3>
+              <button id="logout-button" class="btn btn-danger">Logout</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <h4 class="room-title">Room Title</h4>
+            <p class="room-description">Room Description</p>
+            <h5>Users in the Room:</h5>
+            <ul class="user-list" id="user-list">
+              <!-- Populate this list with users in the room using JavaScript -->
+            </ul>
+          </div>
+        </div>
+        <!-- Game Content -->
+        <div class="card mt-4">
+          <div class="card-body">
+            <!-- Display the question here -->
+            <h4 id="question">Question</h4>
+            <ul id="options" class="list-group">
+              <!-- Display answer options here -->
+            </ul>
+            <div class="alert alert-success mt-3" id="result" style="display: none;">
+              <!-- Display result messages here -->
+            </div>
+            <div class="alert alert-info mt-3" id="timer" style="display: none;">
+              <!-- Display the countdown timer here -->
+            </div>
+            <button id="submit-button" class="btn btn-primary mt-3" style="display: none;">Submit Answer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
     <!-- Toast notifications will appear here -->
   </div>
   <script src="/socket.io/socket.io.js"></script>
   <script src="js/room.js"></script>
+  <!-- Include any additional scripts for game logic -->
 </body>
 </html>
