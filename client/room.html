@@ -41,25 +41,24 @@
   </div>
 
   <div class="container mt-5 question-container" style="display: none;">
-    <div class="card">
-      <div class="card-header">
-        <h5 class="card-title">Question</h5>
-      </div>
-      <div class="card-body">
-        <h3 class="question-text"></h3>
-        <ul class="list-group options-list">
-        </ul>
-      </div>
-      <div class="card-footer">
-        <!-- <div id="timer-container" class="mb-2">
-          <span id="timer-label">Time Left to Start: </span>
-          <span id="timer">5</span> seconds
-        </div> -->
-        <button class="btn btn-primary answer-button">Submit Answer</button>
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title">Question</h5>
+          </div>
+          <div class="card-body">
+            <h3 class="question-text"></h3>
+            <ul class="list-group options-list">
+            </ul>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-primary answer-button">Submit Answer</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-
   <script src="/socket.io/socket.io.js"></script>
   <script src="js/room.js"></script>
 </body>
