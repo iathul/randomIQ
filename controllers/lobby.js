@@ -6,7 +6,8 @@ exports.listRooms = async (req, res) => {
     const rooms = await Room.find({
       $expr: {
         $lt: [{ $size: '$users' }, 2]
-      }
+      },
+      status: 'open'
     }).populate('users')
     if (!rooms.length) {
       return res.status(404).send({

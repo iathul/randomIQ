@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 const Room = require('../models/room')
 const Question = require('../models/question')
+const { set } = require('mongoose')
 
 let io
 let userScores = new Map()
@@ -60,7 +61,8 @@ function initSocket(server) {
         }
 
         const userInAnyRoom = await Room.findOne({
-          users: { $in: [userId] }
+          users: { $in: [userId] },
+          status: 'open'
         })
 
         if (userInAnyRoom) {
@@ -81,7 +83,7 @@ function initSocket(server) {
 
               io.emit('startGame', randomQuestions)
               let currentQuestionIndex = 0
-              const gameTimer = setInterval(() => {
+              const gameTimer = setInterval(async () => {
                 if (currentQuestionIndex < randomQuestions.length) {
                   const currentQuestion = randomQuestions[currentQuestionIndex]
                   io.emit('updateQuestion', currentQuestion)
@@ -93,6 +95,12 @@ function initSocket(server) {
                     winner,
                     scores: Array.from(userScores)
                   })
+                  await Room.findByIdAndUpdate(roomId, {
+                    $set: {
+                      status: 'closed'
+                    }
+                  })
+
                 }
               }, 10000)
             }, 5000)
