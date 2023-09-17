@@ -5,7 +5,7 @@ const Room = require('../models/room')
 const Question = require('../models/question')
 
 let io
-
+let userScores = new Map()
 async function getRandomQuestions() {
   try {
     const randomQuestions = await Question.aggregate([{ $sample: { size: 5 } }])
@@ -15,6 +15,19 @@ async function getRandomQuestions() {
     console.error('Error fetching random questions:', error)
     throw error
   }
+}
+
+function determineWinner(scores) {
+  let winner = null
+  let highestScore = -1
+
+  for (const [userName, score] of scores) {
+    if (score > highestScore) {
+      highestScore = score
+      winner = userName
+    }
+  }
+  return winner
 }
 
 function initSocket(server) {
@@ -39,7 +52,7 @@ function initSocket(server) {
         const decoded = await jwt.verify(authToken, process.env.JWT_SECRET)
         const userId = decoded?._id
         const user = await User.findById(userId)
-        const room = await Room.findById(roomId)
+        const room = await Room.findById(roomId).populate('users')
 
         if (!user || !room) {
           io.emit('error', 'User or room not found.')
@@ -57,8 +70,12 @@ function initSocket(server) {
 
         if (room.users.length < room.maxUsers && !room.users.includes(userId)) {
           room.users.push(userId)
-
+          await room.save()
           if (room.users.length === room.maxUsers) {
+            const usersDetails = await Room.findById(roomId).populate('users')
+            usersDetails.users.forEach(user => {
+              userScores.set(user.userName, 0)
+            })
             setTimeout(async () => {
               const randomQuestions = await getRandomQuestions()
 
@@ -71,15 +88,15 @@ function initSocket(server) {
                   currentQuestionIndex++
                 } else {
                   clearInterval(gameTimer)
-                  io.to(roomId).emit('gameEnd')
+                  const winner = determineWinner(userScores)
+                  io.emit('gameEnd', {
+                    winner,
+                    scores: Array.from(userScores)
+                  })
                 }
-              }, 10000) // Update the question every 10 seconds
+              }, 10000)
             }, 5000)
           }
-
-          await room.save()
-
-          //socket.join(roomId)
 
           io.emit(
             'userJoined',
@@ -89,6 +106,22 @@ function initSocket(server) {
       } catch (error) {
         console.error(error)
         io.emit('token_expired', 'Token expired, please login to continue.')
+      }
+    })
+
+    socket.on('submitAnswer', async (answer, roomId, userName, questionId) => {
+      try {
+        const question = await Question.findById(questionId)
+
+        const isCorrect = question.correctAnswer === answer
+
+        if (isCorrect) {
+          userScores.set(userName, userScores.get(userName) + 10)
+        }
+
+        socket.emit('answerResult', Object.fromEntries(userScores.entries()))
+      } catch (error) {
+        console.error(error)
       }
     })
 

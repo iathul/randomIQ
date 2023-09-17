@@ -82,6 +82,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       radioInput.type = 'radio'
       radioInput.name = 'answer'
       radioInput.value = option
+      radioInput.setAttribute('question-id', question._id)
 
       optionLabel.appendChild(radioInput)
       listItem.appendChild(optionLabel)
@@ -155,6 +156,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.location.href = '/login.html'
   })
 
+  answerButton.addEventListener('click', () => {
+    const selectedOption = document.querySelector(
+      'input[name="answer"]:checked'
+    )
+    const questionId = selectedOption.getAttribute('question-id')
+    if (selectedOption) {
+      const user = JSON.parse(localStorage.getItem('user'))
+      const answer = selectedOption.value
+      socket.emit('submitAnswer', answer, roomId, user.userName, questionId)
+    }
+  })
+
   socket.on('userJoined', message => {
     console.log(message)
     showToast(message)
@@ -222,5 +235,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
       questionContainer.style.display = 'none'
     }
+  })
+
+  function renderGameResults(results) {
+    console.log(results)
+    const gameResultsSection = document.getElementById('game-results-section')
+    const gameResultsList = document.getElementById('game-results-list')
+
+    gameResultsList.innerHTML = ''
+
+    results.forEach((data) => {
+      const listItem = document.createElement('li')
+      listItem.className = 'list-group-item'
+      listItem.textContent = `${data[0]}: ${data[1]} points`
+      gameResultsList.appendChild(listItem)
+    })
+    gameResultsSection.style.display = 'block'
+  }
+
+  socket.on('gameEnd', ({ winner, scores }) => {
+    renderGameResults(scores)
   })
 })
