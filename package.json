@@ -6,7 +6,8 @@
   "scripts": {
     "prod": "node app.js",
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "seed": "node seed/seed.js"
   },
   "author": "Athul Joy",
   "license": "ISC",
