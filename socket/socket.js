@@ -1,11 +1,21 @@
 const socketIo = require('socket.io')
 const jwt = require('jsonwebtoken')
-const mongoose = require('mongoose')
-const mongoId = mongoose.Types.ObjectId
 const User = require('../models/user')
 const Room = require('../models/room')
+const Question = require('../models/question')
 
 let io
+
+async function getRandomQuestions() {
+  try {
+    const randomQuestions = await Question.aggregate([{ $sample: { size: 5 } }])
+
+    return randomQuestions
+  } catch (error) {
+    console.error('Error fetching random questions:', error)
+    throw error
+  }
+}
 
 function initSocket(server) {
   io = socketIo(server)
@@ -32,8 +42,8 @@ function initSocket(server) {
         const room = await Room.findById(roomId)
 
         if (!user || !room) {
-            io.emit('error', 'User or room not found.')
-            return
+          io.emit('error', 'User or room not found.')
+          return
         }
 
         const userInAnyRoom = await Room.findOne({
@@ -47,11 +57,29 @@ function initSocket(server) {
 
         if (room.users.length < room.maxUsers && !room.users.includes(userId)) {
           room.users.push(userId)
+
+          if (room.users.length === room.maxUsers) {
+            const randomQuestions = await getRandomQuestions()
+
+            io.emit('startGame', randomQuestions)
+            let currentQuestionIndex = 0
+            const gameTimer = setInterval(() => {
+              if (currentQuestionIndex < randomQuestions.length) {
+                const currentQuestion = randomQuestions[currentQuestionIndex]
+                io.emit('updateQuestion', currentQuestion)
+                currentQuestionIndex++
+              } else {
+                clearInterval(gameTimer)
+                io.to(roomId).emit('gameEnd')
+              }
+            }, 10000) // Update the question every 10 seconds
+          }
+
           await room.save()
 
-          socket.join(roomId)
+          //socket.join(roomId)
 
-          io.to(roomId).emit(
+          io.emit(
             'userJoined',
             `${user.userName} has joined the room ${room.roomName}`
           )

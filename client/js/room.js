@@ -1,4 +1,3 @@
-// room.js
 document.addEventListener('DOMContentLoaded', async () => {
   const socket = io()
   checkAuthenticated()
@@ -10,6 +9,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   const toastContainer = document.querySelector('.toast-container')
   const errorAlert = document.getElementById('error-message')
   const logoutButton = document.getElementById('logout-button')
+
+  const questionContainer = document.querySelector('.question-container')
+  const questionText = document.querySelector('.question-text')
+  const optionsList = document.querySelector('.options-list')
+  const answerButton = document.querySelector('.answer-button')
+
+  let currentQuestionIndex = 0
+  let currentQuestions = []
 
   function renderUserList(users) {
     userList.innerHTML = ''
@@ -57,6 +64,30 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const toastInstance = new bootstrap.Toast(toast)
     toastInstance.show()
+  }
+
+  function renderQuestion(question) {
+    console.log('render')
+    questionText.textContent = question.questionText
+    optionsList.innerHTML = ''
+
+    question.options.forEach((option, index) => {
+      const listItem = document.createElement('li')
+      listItem.className = 'list-group-item'
+
+      const optionLabel = document.createElement('label')
+      optionLabel.textContent = option
+
+      const radioInput = document.createElement('input')
+      radioInput.type = 'radio'
+      radioInput.name = 'answer'
+      radioInput.value = option
+
+      optionLabel.appendChild(radioInput)
+      listItem.appendChild(optionLabel)
+
+      optionsList.appendChild(listItem)
+    })
   }
 
   async function checkUserInRoom(roomId) {
@@ -118,15 +149,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   const roomId = urlParams.get('roomId')
 
   socket.on('userJoined', message => {
+    console.log(message)
     showToast(message)
     getRoomDetails(roomId)
     updateUserList(roomId)
     checkUserInRoom(roomId)
   })
+
   if (roomId) {
     getRoomDetails(roomId)
     checkUserInRoom(roomId)
   }
+
   function checkAuthenticated() {
     const authToken = localStorage.getItem('authToken')
     if (!authToken) {
@@ -140,8 +174,28 @@ document.addEventListener('DOMContentLoaded', async () => {
   socket.on('token_expired', event => {
     window.location.href = '/login.html'
   })
+
   socket.on('error', error => {
     errorAlert.textContent = error
     errorAlert.classList.remove('d-none')
+  })
+
+  socket.on('startGame', questions => {
+    console.log('q')
+    currentQuestions = questions
+    currentQuestionIndex = 0
+    renderQuestion(currentQuestions[currentQuestionIndex])
+    questionContainer.style.display = 'block'
+  })
+
+  socket.on('updateQuestion', question => {
+      console.log(question)
+    currentQuestionIndex++
+    if (currentQuestionIndex < currentQuestions.length) {
+      renderQuestion(currentQuestions[currentQuestionIndex])
+    } else {
+      // All questions answered, display game end message or logic
+      questionContainer.style.display = 'none'
+    }
   })
 })
