@@ -148,6 +148,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   const urlParams = new URLSearchParams(window.location.search)
   const roomId = urlParams.get('roomId')
 
+  // Add a click event listener to the logout button
+  logoutButton.addEventListener('click', () => {
+    localStorage.removeItem('authToken')
+    localStorage.removeItem('user')
+    window.location.href = '/login.html'
+  })
+
   socket.on('userJoined', message => {
     console.log(message)
     showToast(message)

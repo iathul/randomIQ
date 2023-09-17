@@ -102,15 +102,15 @@ document.addEventListener('DOMContentLoaded', () => {
       socket.emit('checkToken', authToken)
     }
   }
-  // Add a click event listener to the logout button
+
   logoutButton.addEventListener('click', () => {
     localStorage.removeItem('authToken')
     localStorage.removeItem('user')
-    window.location.href = '/login.html' // Redirect to the login page
+    window.location.href = '/login.html'
   })
   socket.on('token_expired', event => {
     window.location.href = '/login.html'
   })
-  // Initial fetch and render of rooms
+  
   getRooms()
 })
