@@ -59,20 +59,22 @@ function initSocket(server) {
           room.users.push(userId)
 
           if (room.users.length === room.maxUsers) {
-            const randomQuestions = await getRandomQuestions()
+            setTimeout(async () => {
+              const randomQuestions = await getRandomQuestions()
 
-            io.emit('startGame', randomQuestions)
-            let currentQuestionIndex = 0
-            const gameTimer = setInterval(() => {
-              if (currentQuestionIndex < randomQuestions.length) {
-                const currentQuestion = randomQuestions[currentQuestionIndex]
-                io.emit('updateQuestion', currentQuestion)
-                currentQuestionIndex++
-              } else {
-                clearInterval(gameTimer)
-                io.to(roomId).emit('gameEnd')
-              }
-            }, 10000) // Update the question every 10 seconds
+              io.emit('startGame', randomQuestions)
+              let currentQuestionIndex = 0
+              const gameTimer = setInterval(() => {
+                if (currentQuestionIndex < randomQuestions.length) {
+                  const currentQuestion = randomQuestions[currentQuestionIndex]
+                  io.emit('updateQuestion', currentQuestion)
+                  currentQuestionIndex++
+                } else {
+                  clearInterval(gameTimer)
+                  io.to(roomId).emit('gameEnd')
+                }
+              }, 10000) // Update the question every 10 seconds
+            }, 5000)
           }
 
           await room.save()

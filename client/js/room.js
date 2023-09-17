@@ -180,21 +180,39 @@ document.addEventListener('DOMContentLoaded', async () => {
     errorAlert.classList.remove('d-none')
   })
 
+  const countdownTimer = document.querySelector('.countdown-timer')
+
+  // Function to start the countdown
+  function startCountdown(seconds) {
+    countdownTimer.style.display = 'block'
+
+    let remainingSeconds = seconds
+    const countdownInterval = setInterval(() => {
+      countdownTimer.textContent = `Game starting in ${remainingSeconds} seconds`
+
+      if (remainingSeconds <= 0) {
+        clearInterval(countdownInterval)
+        countdownTimer.style.display = 'none'
+
+        questionContainer.style.display = 'block'
+      }
+
+      remainingSeconds--
+    }, 1000)
+  }
+
   socket.on('startGame', questions => {
-    console.log('q')
     currentQuestions = questions
     currentQuestionIndex = 0
+    startCountdown(5)
     renderQuestion(currentQuestions[currentQuestionIndex])
-    questionContainer.style.display = 'block'
   })
 
   socket.on('updateQuestion', question => {
-      console.log(question)
     currentQuestionIndex++
     if (currentQuestionIndex < currentQuestions.length) {
       renderQuestion(currentQuestions[currentQuestionIndex])
     } else {
-      // All questions answered, display game end message or logic
       questionContainer.style.display = 'none'
     }
   })
